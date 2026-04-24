@@ -9,6 +9,7 @@ type Booking = {
   id: string; customer_name: string; customer_email: string; customer_phone: string | null;
   booking_date: string; participants: number; status: string; created_at: string;
   tour_id: string | null; quad_id: string | null;
+  offer_title: string | null; discount_percent: number; subtotal: number; total: number;
   tours: { name: string } | null; quads: { name: string } | null;
 };
 
@@ -43,10 +44,10 @@ const BookingsTab = () => {
       <div className="rounded-lg border border-border overflow-hidden">
         <Table>
           <TableHeader><TableRow>
-            <TableHead>Customer</TableHead><TableHead>Date</TableHead><TableHead>Tour</TableHead><TableHead>Quad</TableHead><TableHead>Riders</TableHead><TableHead>Status</TableHead>
+            <TableHead>Customer</TableHead><TableHead>Date</TableHead><TableHead>Tour</TableHead><TableHead>Quad</TableHead><TableHead>Riders</TableHead><TableHead>Total</TableHead><TableHead>Status</TableHead>
           </TableRow></TableHeader>
           <TableBody>
-            {bookings.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">No bookings yet</TableCell></TableRow>}
+            {bookings.length === 0 && <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">No bookings yet</TableCell></TableRow>}
             {bookings.map((b) => (
               <TableRow key={b.id}>
                 <TableCell>
@@ -57,6 +58,14 @@ const BookingsTab = () => {
                 <TableCell>{b.tours?.name || "—"}</TableCell>
                 <TableCell>{b.quads?.name || "Any"}</TableCell>
                 <TableCell>{b.participants}</TableCell>
+                <TableCell>
+                  <div className="font-semibold tabular-nums">€{Number(b.total).toFixed(2)}</div>
+                  {b.discount_percent > 0 && (
+                    <div className="text-xs text-primary">
+                      {b.offer_title} −{b.discount_percent}%
+                    </div>
+                  )}
+                </TableCell>
                 <TableCell>
                   <Select value={b.status} onValueChange={(v) => updateStatus(b.id, v)}>
                     <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
