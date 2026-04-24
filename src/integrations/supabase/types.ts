@@ -21,11 +21,16 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string | null
+          discount_percent: number
           id: string
           notes: string | null
+          offer_id: string | null
+          offer_title: string | null
           participants: number
           quad_id: string | null
           status: string
+          subtotal: number
+          total: number
           tour_id: string | null
         }
         Insert: {
@@ -34,11 +39,16 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone?: string | null
+          discount_percent?: number
           id?: string
           notes?: string | null
+          offer_id?: string | null
+          offer_title?: string | null
           participants?: number
           quad_id?: string | null
           status?: string
+          subtotal?: number
+          total?: number
           tour_id?: string | null
         }
         Update: {
@@ -47,14 +57,26 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           customer_phone?: string | null
+          discount_percent?: number
           id?: string
           notes?: string | null
+          offer_id?: string | null
+          offer_title?: string | null
           participants?: number
           quad_id?: string | null
           status?: string
+          subtotal?: number
+          total?: number
           tour_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bookings_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bookings_quad_id_fkey"
             columns: ["quad_id"]
