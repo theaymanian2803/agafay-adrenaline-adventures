@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Tag, Sparkles } from "lucide-react";
+
+type Tour = { id: string; name: string; price: number };
+type Quad = { id: string; name: string };
+type Offer = { id: string; title: string; description: string | null; discount_percent: number; starts_at: string; ends_at: string };
+
+const NO_OFFER = "__none__";
 
 const schema = z.object({
   customer_name: z.string().trim().min(2).max(120),
@@ -22,9 +28,11 @@ const schema = z.object({
 });
 
 const BookingForm = () => {
-  const [tours, setTours] = useState<any[]>([]);
-  const [quads, setQuads] = useState<any[]>([]);
+  const [tours, setTours] = useState<Tour[]>([]);
+  const [quads, setQuads] = useState<Quad[]>([]);
+  const [offers, setOffers] = useState<Offer[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [offerId, setOfferId] = useState<string>(NO_OFFER);
   const [form, setForm] = useState({
     customer_name: "",
     customer_email: "",
@@ -37,9 +45,42 @@ const BookingForm = () => {
   });
 
   useEffect(() => {
-    supabase.from("tours").select("id,name").eq("active", true).then(({ data }) => setTours(data || []));
-    supabase.from("quads").select("id,name").eq("status", "available").then(({ data }) => setQuads(data || []));
+    const today = new Date().toISOString().split("T")[0];
+    supabase.from("tours").select("id,name,price").eq("active", true)
+      .then(({ data }) => setTours((data as Tour[]) || []));
+    supabase.from("quads").select("id,name").eq("status", "available")
+      .then(({ data }) => setQuads((data as Quad[]) || []));
+    supabase
+      .from("offers")
+      .select("id,title,description,discount_percent,starts_at,ends_at")
+      .eq("active", true)
+      .lte("starts_at", today)
+      .gte("ends_at", today)
+      .order("discount_percent", { ascending: false })
+      .then(({ data }) => setOffers((data as Offer[]) || []));
   }, []);
+
+  // Auto-apply best offer on first load (only if user hasn't picked one)
+  useEffect(() => {
+    if (offers.length > 0 && offerId === NO_OFFER) {
+      setOfferId(offers[0].id);
+    }
+  }, [offers, offerId]);
+
+  const selectedTour = useMemo(
+    () => tours.find((t) => t.id === form.tour_id) || null,
+    [tours, form.tour_id]
+  );
+  const selectedOffer = useMemo(
+    () => offers.find((o) => o.id === offerId) || null,
+    [offers, offerId]
+  );
+
+  const tourPrice = selectedTour ? Number(selectedTour.price) : 0;
+  const subtotal = tourPrice * form.participants;
+  const discountPercent = selectedOffer?.discount_percent ?? 0;
+  const discountAmount = +(subtotal * discountPercent / 100).toFixed(2);
+  const total = +(subtotal - discountAmount).toFixed(2);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,8 +89,19 @@ const BookingForm = () => {
       toast.error(parsed.error.issues[0]?.message || "Please check your inputs");
       return;
     }
+    if (!form.tour_id) {
+      toast.error("Please select a tour");
+      return;
+    }
     setSubmitting(true);
-    const payload: any = { ...parsed.data };
+    const payload: any = {
+      ...parsed.data,
+      offer_id: selectedOffer?.id ?? null,
+      offer_title: selectedOffer?.title ?? null,
+      discount_percent: discountPercent,
+      subtotal,
+      total,
+    };
     if (!payload.tour_id) delete payload.tour_id;
     if (!payload.quad_id) delete payload.quad_id;
     const { error } = await supabase.from("bookings").insert(payload);
@@ -58,7 +110,11 @@ const BookingForm = () => {
       toast.error("Could not submit booking. Please try again.");
       return;
     }
-    toast.success("Booking received! We'll be in touch within 24h.");
+    toast.success(
+      selectedOffer
+        ? `Booking received! ${discountPercent}% off applied — total €${total.toFixed(2)}.`
+        : "Booking received! We'll be in touch within 24h."
+    );
     setForm({ ...form, customer_name: "", customer_email: "", customer_phone: "", notes: "", booking_date: "" });
   };
 
@@ -81,6 +137,27 @@ const BookingForm = () => {
               Reserve your spot in 60 seconds. We'll confirm your booking by
               email within a day. Hotel pickup available in Marrakech.
             </p>
+
+            {offers.length > 0 && (
+              <div className="mt-8 space-y-2">
+                <span className="text-xs uppercase tracking-[0.3em] text-primary inline-flex items-center gap-2">
+                  <Sparkles className="h-3.5 w-3.5" /> Active promos
+                </span>
+                <ul className="space-y-2">
+                  {offers.map((o) => (
+                    <li key={o.id} className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm">
+                      <Tag className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                      <div>
+                        <div className="font-semibold">
+                          {o.title} <span className="text-primary">— {o.discount_percent}% off</span>
+                        </div>
+                        {o.description && <div className="text-xs text-muted-foreground">{o.description}</div>}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           <form onSubmit={submit} className="rounded-2xl border border-border bg-card p-8 shadow-card">
@@ -110,7 +187,11 @@ const BookingForm = () => {
                 <Select value={form.tour_id} onValueChange={(v) => setForm({ ...form, tour_id: v })}>
                   <SelectTrigger><SelectValue placeholder="Select a tour" /></SelectTrigger>
                   <SelectContent>
-                    {tours.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
+                    {tours.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.name} — €{Number(t.price).toFixed(0)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -124,10 +205,49 @@ const BookingForm = () => {
                 </Select>
               </div>
               <div className="sm:col-span-2">
+                <Label>Promo code</Label>
+                <Select value={offerId} onValueChange={setOfferId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="No promo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NO_OFFER}>No promo</SelectItem>
+                    {offers.map((o) => (
+                      <SelectItem key={o.id} value={o.id}>
+                        {o.title} — {o.discount_percent}% off
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="sm:col-span-2">
                 <Label htmlFor="notes">Notes (optional)</Label>
                 <Textarea id="notes" rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} maxLength={500} />
               </div>
             </div>
+
+            {/* Live quote */}
+            <div className="mt-6 rounded-xl border border-border bg-background/40 p-5">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
+                  {selectedTour ? `${selectedTour.name} × ${form.participants}` : "Select a tour to see pricing"}
+                </span>
+                <span className="tabular-nums">€{subtotal.toFixed(2)}</span>
+              </div>
+              {selectedOffer && discountAmount > 0 && (
+                <div className="mt-2 flex items-center justify-between text-sm text-primary">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Tag className="h-3.5 w-3.5" /> {selectedOffer.title} ({discountPercent}%)
+                  </span>
+                  <span className="tabular-nums">−€{discountAmount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+                <span className="text-xs uppercase tracking-wider text-muted-foreground">Total</span>
+                <span className="font-display text-3xl text-gradient-primary tabular-nums">€{total.toFixed(2)}</span>
+              </div>
+            </div>
+
             <Button type="submit" variant="hero" size="lg" className="mt-6 w-full" disabled={submitting}>
               {submitting ? <Loader2 className="animate-spin" /> : "Confirm booking"}
             </Button>
