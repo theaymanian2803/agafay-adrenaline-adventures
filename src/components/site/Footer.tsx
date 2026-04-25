@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Mail, Phone, MapPin, Mountain } from "lucide-react";
+import SectionVideo from "@/components/site/SectionVideo";
 
-const Footer = () => (
+const Footer = ({ videoUrl }: { videoUrl?: string | null }) => (
   <footer className="border-t border-border bg-background">
     <div className="container mx-auto py-16">
+      <SectionVideo src={videoUrl} label="Footer" className="mb-12" />
+
       <div className="grid gap-12 md:grid-cols-4">
         <div className="md:col-span-1">
           <Link to="/" className="flex items-center gap-2">

@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Tag, Sparkles } from "lucide-react";
+import SectionVideo from "@/components/site/SectionVideo";
 
 type Tour = { id: string; name: string; price: number };
 type Quad = { id: string; name: string };
@@ -27,7 +28,7 @@ const schema = z.object({
   notes: z.string().max(500).optional(),
 });
 
-const BookingForm = () => {
+const BookingForm = ({ videoUrl }: { videoUrl?: string | null }) => {
   const [tours, setTours] = useState<Tour[]>([]);
   const [quads, setQuads] = useState<Quad[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -158,6 +159,8 @@ const BookingForm = () => {
                 </ul>
               </div>
             )}
+
+            <SectionVideo src={videoUrl} label="Booking" className="mt-8" />
           </div>
 
           <form onSubmit={submit} className="rounded-2xl border border-border bg-card p-8 shadow-card">
