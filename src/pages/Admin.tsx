@@ -10,6 +10,7 @@ import OffersTab from "@/components/admin/OffersTab";
 import BookingsTab from "@/components/admin/BookingsTab";
 import VideosTab from "@/components/admin/VideosTab";
 import CategoriesTab from "@/components/admin/CategoriesTab";
+import ToursTab from "@/components/admin/ToursTab";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -56,12 +57,14 @@ const Admin = () => {
           <TabsList>
             <TabsTrigger value="bookings">Bookings</TabsTrigger>
             <TabsTrigger value="quads">Quads</TabsTrigger>
+            <TabsTrigger value="tours">Tours</TabsTrigger>
             <TabsTrigger value="offers">Offers</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="videos">Videos</TabsTrigger>
           </TabsList>
           <TabsContent value="bookings" className="mt-8"><BookingsTab /></TabsContent>
           <TabsContent value="quads" className="mt-8"><QuadsTab /></TabsContent>
+          <TabsContent value="tours" className="mt-8"><ToursTab /></TabsContent>
           <TabsContent value="offers" className="mt-8"><OffersTab /></TabsContent>
           <TabsContent value="categories" className="mt-8"><CategoriesTab /></TabsContent>
           <TabsContent value="videos" className="mt-8"><VideosTab /></TabsContent>

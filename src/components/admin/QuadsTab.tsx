@@ -10,9 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-type Quad = { id: string; name: string; engine_size: number; image_url: string | null; status: string; hourly_rate: number; daily_rate: number };
+type Quad = { id: string; name: string; engine_size: number; image_url: string | null; status: string; hourly_rate: number; daily_rate: number; quad_type: string | null; capacity: number; transmission: string | null; short_description: string | null };
 
-const empty = { name: "", engine_size: 450, image_url: "", status: "available", hourly_rate: 0, daily_rate: 0 };
+const empty = { name: "", engine_size: 450, image_url: "", status: "available", hourly_rate: 0, daily_rate: 0, quad_type: "450cc ATV", capacity: 1, transmission: "Automatic", short_description: "" };
 
 const QuadsTab = () => {
   const [quads, setQuads] = useState<Quad[]>([]);
@@ -48,6 +48,10 @@ const QuadsTab = () => {
       status: form.status,
       hourly_rate: Number(form.hourly_rate),
       daily_rate: Number(form.daily_rate),
+      quad_type: form.quad_type || null,
+      capacity: Number(form.capacity),
+      transmission: form.transmission || null,
+      short_description: form.short_description || null,
     };
     const { error } = editing
       ? await supabase.from("quads").update(payload).eq("id", editing.id)
@@ -91,6 +95,12 @@ const QuadsTab = () => {
                 <div><Label>Hourly rate (€)</Label><Input type="number" value={form.hourly_rate} onChange={(e) => setForm({ ...form, hourly_rate: e.target.value })} /></div>
                 <div><Label>Daily rate (€)</Label><Input type="number" value={form.daily_rate} onChange={(e) => setForm({ ...form, daily_rate: e.target.value })} /></div>
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><Label>Quad type</Label><Input value={form.quad_type || ""} onChange={(e) => setForm({ ...form, quad_type: e.target.value })} /></div>
+                <div><Label>Capacity</Label><Input type="number" min={1} value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} /></div>
+              </div>
+              <div><Label>Transmission</Label><Input value={form.transmission || ""} onChange={(e) => setForm({ ...form, transmission: e.target.value })} /></div>
+              <div><Label>Short description</Label><Input value={form.short_description || ""} onChange={(e) => setForm({ ...form, short_description: e.target.value })} /></div>
               <div>
                 <Label>Image</Label>
                 <Input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
@@ -107,14 +117,15 @@ const QuadsTab = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead><TableHead>Engine</TableHead><TableHead>Status</TableHead><TableHead>Hourly</TableHead><TableHead>Daily</TableHead><TableHead className="text-right">Actions</TableHead>
+              <TableHead>Name</TableHead><TableHead>Type</TableHead><TableHead>Engine</TableHead><TableHead>Status</TableHead><TableHead>Hourly</TableHead><TableHead>Daily</TableHead><TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {quads.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">No quads yet</TableCell></TableRow>}
+            {quads.length === 0 && <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">No quads yet</TableCell></TableRow>}
             {quads.map((q) => (
               <TableRow key={q.id}>
                 <TableCell className="font-medium">{q.name}</TableCell>
+                <TableCell>{q.quad_type || "—"}</TableCell>
                 <TableCell>{q.engine_size}cc</TableCell>
                 <TableCell><Badge variant={q.status === "available" ? "default" : "secondary"}>{q.status}</Badge></TableCell>
                 <TableCell>€{q.hourly_rate}</TableCell>
