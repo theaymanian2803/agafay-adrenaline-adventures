@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, CalendarDays, Mail, MapPin, Phone, Route, User, Users, Wrench, Loader2 } from "lucide-react";
+import { ArrowLeft, CalendarDays, Mail, MapPin, Phone, Printer, Route, User, Users, Wrench, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { Button } from "@/components/ui/button";
@@ -90,14 +90,18 @@ const BookingDetail = () => {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Navbar />
-      <section className="container mx-auto py-28">
-        <Button variant="outlineGlow" size="sm" asChild><Link to="/admin"><ArrowLeft /> Back to bookings</Link></Button>
+      <section className="container mx-auto py-28 print-summary">
+        <div className="no-print flex flex-wrap gap-3">
+          <Button variant="outlineGlow" size="sm" asChild><Link to="/admin"><ArrowLeft /> Back to bookings</Link></Button>
+          <Button variant="hero" size="sm" onClick={() => window.print()}><Printer /> Print / Save PDF</Button>
+        </div>
 
         <div className="mt-10 flex flex-col justify-between gap-6 border-b border-border pb-8 md:flex-row md:items-end">
           <div>
             <Badge variant={statusVariant[booking.status] || "secondary"} className="uppercase tracking-wider">{booking.status}</Badge>
             <h1 className="mt-5 font-display text-6xl leading-none md:text-8xl">Reservation Details</h1>
             <p className="mt-4 text-muted-foreground">Booking #{booking.id.slice(0, 8).toUpperCase()}</p>
+            <p className="mt-2 hidden text-sm text-muted-foreground print:block">Agafay Quad confirmation summary · {new Date().toLocaleDateString()}</p>
           </div>
           <div className="text-left md:text-right">
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Total</p>
