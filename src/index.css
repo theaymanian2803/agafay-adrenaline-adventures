@@ -87,3 +87,57 @@
     background-size: 3px 3px;
   }
 }
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  body {
+    background: hsl(0 0% 100%) !important;
+    color: hsl(0 0% 8%) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print,
+  nav,
+  header {
+    display: none !important;
+  }
+
+  .print-summary {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .print-summary * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .print-summary .bg-card,
+  .print-summary .bg-background\/40 {
+    background: hsl(0 0% 100%) !important;
+  }
+
+  .print-summary .text-muted-foreground,
+  .print-summary .text-primary,
+  .print-summary .text-gradient-primary {
+    color: hsl(0 0% 18%) !important;
+    background: none !important;
+  }
+
+  .print-summary .border-border,
+  .print-summary .border-primary\/30 {
+    border-color: hsl(0 0% 78%) !important;
+  }
+
+  .print-summary h1 {
+    font-size: 42pt !important;
+  }
+
+  .print-summary h2 {
+    font-size: 20pt !important;
+  }
+}
