@@ -162,6 +162,39 @@ export type Database = {
         }
         Relationships: []
       }
+      section_videos: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          label: string
+          section_key: string
+          sort_order: number
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          label: string
+          section_key: string
+          sort_order?: number
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          label?: string
+          section_key?: string
+          sort_order?: number
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       tours: {
         Row: {
           active: boolean
