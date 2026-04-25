@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 type Booking = {
@@ -45,10 +47,10 @@ const BookingsTab = () => {
       <div className="rounded-lg border border-border overflow-hidden">
         <Table>
           <TableHeader><TableRow>
-            <TableHead>Customer</TableHead><TableHead>Date</TableHead><TableHead>Tour</TableHead><TableHead>Route</TableHead><TableHead>Quad</TableHead><TableHead>Riders</TableHead><TableHead>Total</TableHead><TableHead>Status</TableHead>
+            <TableHead>Customer</TableHead><TableHead>Date</TableHead><TableHead>Tour</TableHead><TableHead>Route</TableHead><TableHead>Quad</TableHead><TableHead>Riders</TableHead><TableHead>Total</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Details</TableHead>
           </TableRow></TableHeader>
           <TableBody>
-            {bookings.length === 0 && <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-8">No bookings yet</TableCell></TableRow>}
+            {bookings.length === 0 && <TableRow><TableCell colSpan={9} className="text-center text-muted-foreground py-8">No bookings yet</TableCell></TableRow>}
             {bookings.map((b) => (
               <TableRow key={b.id}>
                 <TableCell>
@@ -81,6 +83,9 @@ const BookingsTab = () => {
                       <SelectItem value="cancelled">Cancelled</SelectItem>
                     </SelectContent>
                   </Select>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button variant="outlineGlow" size="sm" asChild><Link to={`/admin/bookings/${b.id}`}>Open</Link></Button>
                 </TableCell>
               </TableRow>
             ))}
