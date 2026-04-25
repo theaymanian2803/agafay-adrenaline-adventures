@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SectionVideo from "@/components/site/SectionVideo";
 
 const tiers = [
   {
@@ -27,7 +28,7 @@ const tiers = [
   },
 ];
 
-const Pricing = () => (
+const Pricing = ({ videoUrl }: { videoUrl?: string | null }) => (
   <section id="pricing" className="relative py-28">
     <div className="absolute inset-0 bg-gradient-dune opacity-50" />
     <div className="container mx-auto relative">
@@ -43,6 +44,8 @@ const Pricing = () => (
           Simple. Honest. <span className="text-gradient-primary">Thrilling.</span>
         </h2>
       </motion.div>
+
+      <SectionVideo src={videoUrl} label="Pricing" className="mt-12" />
 
       <div className="mt-16 grid gap-6 md:grid-cols-3">
         {tiers.map((tier, i) => (

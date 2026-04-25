@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import SectionVideo from "@/components/site/SectionVideo";
 import sunset from "@/assets/tour-sunset.jpg";
 import palmeraie from "@/assets/tour-palmeraie.jpg";
 import atlas from "@/assets/tour-atlas.jpg";
@@ -28,7 +29,7 @@ const difficultyColor: Record<string, string> = {
   extreme: "bg-primary/15 text-primary border-primary/40",
 };
 
-const Tours = () => {
+const Tours = ({ videoUrl }: { videoUrl?: string | null }) => {
   const [tours, setTours] = useState(fallback);
 
   useEffect(() => {
@@ -58,6 +59,8 @@ const Tours = () => {
             with its own rhythm, terrain and adrenaline.
           </p>
         </div>
+
+        <SectionVideo src={videoUrl} label="Tours" className="mt-12" />
 
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {tours.map((t, i) => (

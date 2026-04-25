@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import heroImg from "@/assets/hero-agafay.jpg";
 
-const Hero = () => {
+type HeroProps = {
+  videoUrl?: string | null;
+};
+
+const Hero = ({ videoUrl }: HeroProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
@@ -18,13 +22,17 @@ const Hero = () => {
     <section ref={ref} className="relative h-[100svh] w-full overflow-hidden">
       {/* Parallax background */}
       <motion.div style={{ y, scale }} className="absolute inset-0">
-        <img
-          src={heroImg}
-          alt="Quad ATV crossing the orange dunes of the Agafay desert near Marrakech at sunset"
-          width={1920}
-          height={1080}
-          className="h-full w-full object-cover"
-        />
+        {videoUrl ? (
+          <video src={videoUrl} className="h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" aria-label="Agafay quad hero video" />
+        ) : (
+          <img
+            src={heroImg}
+            alt="Quad ATV crossing the orange dunes of the Agafay desert near Marrakech at sunset"
+            width={1920}
+            height={1080}
+            className="h-full w-full object-cover"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-hero" />
         <div className="absolute inset-0 bg-gradient-dune" />
       </motion.div>

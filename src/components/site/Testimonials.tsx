@@ -7,6 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import SectionVideo from "@/components/site/SectionVideo";
 
 const reviews = [
   { name: "Sofia L.", country: "Madrid, Spain", text: "Best part of our Marrakech trip. The sunset over Agafay from a quad — life-changing.", rating: 5 },
@@ -16,7 +17,7 @@ const reviews = [
   { name: "Yuki T.", country: "Tokyo, Japan", text: "Photos they sent us afterwards were incredible. Whole experience felt premium.", rating: 5 },
 ];
 
-const Testimonials = () => (
+const Testimonials = ({ videoUrl }: { videoUrl?: string | null }) => (
   <section id="reviews" className="relative py-28 bg-secondary/30">
     <div className="container mx-auto">
       <motion.div
@@ -31,6 +32,8 @@ const Testimonials = () => (
           1,200+ <span className="text-gradient-primary">5-star</span> reviews.
         </h2>
       </motion.div>
+
+      <SectionVideo src={videoUrl} label="Testimonials" className="mt-12" />
 
       <div className="mt-16">
         <Carousel opts={{ loop: true, align: "start" }} className="w-full">

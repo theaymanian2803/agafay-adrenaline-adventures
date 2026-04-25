@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Compass, ShieldCheck, Wrench, Sun } from "lucide-react";
+import SectionVideo from "@/components/site/SectionVideo";
 
 const items = [
   { icon: Compass, title: "Agafay Oasis", desc: "Cross hidden palm oases and Berber trails most tourists never see." },
@@ -8,7 +9,7 @@ const items = [
   { icon: Sun, title: "Sunset Trails", desc: "Time your ride with the gold-hour glow over the Atlas Mountains." },
 ];
 
-const Highlights = () => (
+const Highlights = ({ videoUrl }: { videoUrl?: string | null }) => (
   <section id="highlights" className="relative py-28">
     <div className="container mx-auto">
       <motion.div
@@ -24,6 +25,8 @@ const Highlights = () => (
           <br />Tuned for thrill.
         </h2>
       </motion.div>
+
+      <SectionVideo src={videoUrl} label="Highlights" className="mt-12" />
 
       <div className="mt-16 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
         {items.map((item, i) => (
