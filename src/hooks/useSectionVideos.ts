@@ -23,7 +23,7 @@ export const useSectionVideos = () => {
       .eq("active", true)
       .order("sort_order", { ascending: true })
       .then(({ data }) => {
-        const mapped = ((data as SectionVideo[]) || []).reduce<Record<string, SectionVideo>>((acc, video) => {
+        const mapped = (((data as unknown) as SectionVideo[]) || []).reduce<Record<string, SectionVideo>>((acc, video) => {
           acc[video.section_key] = video;
           return acc;
         }, {});

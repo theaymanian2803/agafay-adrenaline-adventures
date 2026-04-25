@@ -27,7 +27,7 @@ const VideosTab = () => {
       toast.error(error.message);
       return;
     }
-    setVideos((data as SectionVideo[]) || []);
+    setVideos(((data as unknown) as SectionVideo[]) || []);
   };
 
   useEffect(() => { load(); }, []);
