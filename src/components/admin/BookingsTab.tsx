@@ -9,6 +9,7 @@ type Booking = {
   id: string; customer_name: string; customer_email: string; customer_phone: string | null;
   booking_date: string; participants: number; status: string; created_at: string;
   tour_id: string | null; quad_id: string | null;
+  route_from: string | null; route_to: string | null; quad_type: string | null;
   offer_title: string | null; discount_percent: number; subtotal: number; total: number;
   tours: { name: string } | null; quads: { name: string } | null;
 };
@@ -44,10 +45,10 @@ const BookingsTab = () => {
       <div className="rounded-lg border border-border overflow-hidden">
         <Table>
           <TableHeader><TableRow>
-            <TableHead>Customer</TableHead><TableHead>Date</TableHead><TableHead>Tour</TableHead><TableHead>Quad</TableHead><TableHead>Riders</TableHead><TableHead>Total</TableHead><TableHead>Status</TableHead>
+            <TableHead>Customer</TableHead><TableHead>Date</TableHead><TableHead>Tour</TableHead><TableHead>Route</TableHead><TableHead>Quad</TableHead><TableHead>Riders</TableHead><TableHead>Total</TableHead><TableHead>Status</TableHead>
           </TableRow></TableHeader>
           <TableBody>
-            {bookings.length === 0 && <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">No bookings yet</TableCell></TableRow>}
+            {bookings.length === 0 && <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-8">No bookings yet</TableCell></TableRow>}
             {bookings.map((b) => (
               <TableRow key={b.id}>
                 <TableCell>
@@ -56,7 +57,11 @@ const BookingsTab = () => {
                 </TableCell>
                 <TableCell>{b.booking_date}</TableCell>
                 <TableCell>{b.tours?.name || "—"}</TableCell>
-                <TableCell>{b.quads?.name || "Any"}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">{b.route_from || "—"} → {b.route_to || "—"}</TableCell>
+                <TableCell>
+                  <div>{b.quads?.name || "Any"}</div>
+                  {b.quad_type && <div className="text-xs text-muted-foreground">{b.quad_type}</div>}
+                </TableCell>
                 <TableCell>{b.participants}</TableCell>
                 <TableCell>
                   <div className="font-semibold tabular-nums">€{Number(b.total).toFixed(2)}</div>

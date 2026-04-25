@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Clock, Gauge, ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
@@ -96,7 +97,7 @@ const Tours = ({ videoUrl }: { videoUrl?: string | null }) => {
                     <span className="text-xs uppercase tracking-wider text-muted-foreground">From</span>
                     <div className="font-display text-3xl text-gradient-primary">€{Number(t.price).toFixed(0)}</div>
                   </div>
-                  <Button variant="outlineGlow" size="sm">View Details <ArrowUpRight /></Button>
+                  <Button variant="outlineGlow" size="sm" asChild><Link to={`/tours/${t.id}`}>View Details <ArrowUpRight /></Link></Button>
                 </div>
               </div>
             </motion.article>

@@ -11,8 +11,8 @@ import { toast } from "sonner";
 import { Loader2, Tag, Sparkles } from "lucide-react";
 import SectionVideo from "@/components/site/SectionVideo";
 
-type Tour = { id: string; name: string; price: number };
-type Quad = { id: string; name: string };
+type Tour = { id: string; name: string; price: number; category_id: string | null; quad_type: string | null; route_from: string | null; route_to: string | null };
+type Quad = { id: string; name: string; quad_type: string | null };
 type Offer = { id: string; title: string; description: string | null; discount_percent: number; starts_at: string; ends_at: string };
 
 const NO_OFFER = "__none__";
@@ -47,9 +47,9 @@ const BookingForm = ({ videoUrl }: { videoUrl?: string | null }) => {
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
-    supabase.from("tours").select("id,name,price").eq("active", true)
+    supabase.from("tours").select("id,name,price,category_id,quad_type,route_from,route_to").eq("active", true)
       .then(({ data }) => setTours((data as Tour[]) || []));
-    supabase.from("quads").select("id,name").eq("status", "available")
+    supabase.from("quads").select("id,name,quad_type").eq("status", "available")
       .then(({ data }) => setQuads((data as Quad[]) || []));
     supabase
       .from("offers")
@@ -102,6 +102,10 @@ const BookingForm = ({ videoUrl }: { videoUrl?: string | null }) => {
       discount_percent: discountPercent,
       subtotal,
       total,
+      category_id: selectedTour?.category_id ?? null,
+      route_from: selectedTour?.route_from ?? null,
+      route_to: selectedTour?.route_to ?? null,
+      quad_type: selectedTour?.quad_type ?? quads.find((q) => q.id === form.quad_id)?.quad_type ?? null,
     };
     if (!payload.tour_id) delete payload.tour_id;
     if (!payload.quad_id) delete payload.quad_id;
