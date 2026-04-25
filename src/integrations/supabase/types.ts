@@ -17,6 +17,7 @@ export type Database = {
       bookings: {
         Row: {
           booking_date: string
+          category_id: string | null
           created_at: string
           customer_email: string
           customer_name: string
@@ -28,6 +29,9 @@ export type Database = {
           offer_title: string | null
           participants: number
           quad_id: string | null
+          quad_type: string | null
+          route_from: string | null
+          route_to: string | null
           status: string
           subtotal: number
           total: number
@@ -35,6 +39,7 @@ export type Database = {
         }
         Insert: {
           booking_date: string
+          category_id?: string | null
           created_at?: string
           customer_email: string
           customer_name: string
@@ -46,6 +51,9 @@ export type Database = {
           offer_title?: string | null
           participants?: number
           quad_id?: string | null
+          quad_type?: string | null
+          route_from?: string | null
+          route_to?: string | null
           status?: string
           subtotal?: number
           total?: number
@@ -53,6 +61,7 @@ export type Database = {
         }
         Update: {
           booking_date?: string
+          category_id?: string | null
           created_at?: string
           customer_email?: string
           customer_name?: string
@@ -64,12 +73,22 @@ export type Database = {
           offer_title?: string | null
           participants?: number
           quad_id?: string | null
+          quad_type?: string | null
+          route_from?: string | null
+          route_to?: string | null
           status?: string
           subtotal?: number
           total?: number
           tour_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bookings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bookings_offer_id_fkey"
             columns: ["offer_id"]
@@ -92,6 +111,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       offers: {
         Row: {
@@ -128,6 +180,7 @@ export type Database = {
       }
       quads: {
         Row: {
+          capacity: number
           created_at: string
           daily_rate: number
           engine_size: number
@@ -135,10 +188,14 @@ export type Database = {
           id: string
           image_url: string | null
           name: string
+          quad_type: string | null
+          short_description: string | null
           status: string
+          transmission: string | null
           updated_at: string
         }
         Insert: {
+          capacity?: number
           created_at?: string
           daily_rate?: number
           engine_size: number
@@ -146,10 +203,14 @@ export type Database = {
           id?: string
           image_url?: string | null
           name: string
+          quad_type?: string | null
+          short_description?: string | null
           status?: string
+          transmission?: string | null
           updated_at?: string
         }
         Update: {
+          capacity?: number
           created_at?: string
           daily_rate?: number
           engine_size?: number
@@ -157,7 +218,10 @@ export type Database = {
           id?: string
           image_url?: string | null
           name?: string
+          quad_type?: string | null
+          short_description?: string | null
           status?: string
+          transmission?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -198,38 +262,67 @@ export type Database = {
       tours: {
         Row: {
           active: boolean
+          category_id: string | null
           created_at: string
           description: string | null
           difficulty: string
+          distance_km: number | null
           duration: string
           id: string
           image_url: string | null
+          included_items: string[]
           name: string
           price: number
+          quad_type: string | null
+          route_from: string | null
+          route_to: string | null
+          terrain: string | null
         }
         Insert: {
           active?: boolean
+          category_id?: string | null
           created_at?: string
           description?: string | null
           difficulty?: string
+          distance_km?: number | null
           duration: string
           id?: string
           image_url?: string | null
+          included_items?: string[]
           name: string
           price?: number
+          quad_type?: string | null
+          route_from?: string | null
+          route_to?: string | null
+          terrain?: string | null
         }
         Update: {
           active?: boolean
+          category_id?: string | null
           created_at?: string
           description?: string | null
           difficulty?: string
+          distance_km?: number | null
           duration?: string
           id?: string
           image_url?: string | null
+          included_items?: string[]
           name?: string
           price?: number
+          quad_type?: string | null
+          route_from?: string | null
+          route_to?: string | null
+          terrain?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tours_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
