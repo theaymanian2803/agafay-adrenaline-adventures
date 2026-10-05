@@ -1,10 +1,10 @@
+import { db } from "@/lib/db";
 import { motion } from "framer-motion";
 import { Clock, Gauge, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import SectionVideo from "@/components/site/SectionVideo";
 import sunset from "@/assets/tour-sunset.jpg";
 import palmeraie from "@/assets/tour-palmeraie.jpg";
@@ -34,7 +34,7 @@ const Tours = ({ videoUrl }: { videoUrl?: string | null }) => {
   const [tours, setTours] = useState(fallback);
 
   useEffect(() => {
-    supabase.from("tours").select("*").eq("active", true).order("price", { ascending: true })
+    db.from("tours").select("*").eq("active", true).order("price", { ascending: true })
       .then(({ data }) => {
         if (data && data.length) setTours(data as any);
       });

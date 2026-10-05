@@ -1,3 +1,4 @@
+import { db } from "@/lib/db";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ const QuadsTab = () => {
   const [uploading, setUploading] = useState(false);
 
   const load = async () => {
-    const { data } = await supabase.from("quads").select("*").order("created_at", { ascending: false });
+    const { data } = await db.from("quads").select("*").order("created_at", { ascending: false });
     setQuads((data as Quad[]) || []);
   };
   useEffect(() => { load(); }, []);
@@ -54,8 +55,8 @@ const QuadsTab = () => {
       short_description: form.short_description || null,
     };
     const { error } = editing
-      ? await supabase.from("quads").update(payload).eq("id", editing.id)
-      : await supabase.from("quads").insert(payload);
+      ? await db.from("quads").update(payload).eq("id", editing.id)
+      : await db.from("quads").insert(payload);
     if (error) { toast.error(error.message); return; }
     toast.success(editing ? "Quad updated" : "Quad added");
     setOpen(false); load();
@@ -63,7 +64,7 @@ const QuadsTab = () => {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this quad?")) return;
-    const { error } = await supabase.from("quads").delete().eq("id", id);
+    const { error } = await db.from("quads").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success("Quad deleted"); load();
   };

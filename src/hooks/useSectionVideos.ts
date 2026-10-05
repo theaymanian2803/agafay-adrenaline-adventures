@@ -1,5 +1,5 @@
+import { db } from "@/lib/db";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 export type SectionVideo = {
   id: string;
@@ -17,8 +17,8 @@ export const useSectionVideos = () => {
   const [videos, setVideos] = useState<Record<string, SectionVideo>>({});
 
   useEffect(() => {
-    supabase
-      .from("section_videos" as any)
+    db
+      .from("section_videos")
       .select("id,section_key,label,video_url,active,sort_order")
       .eq("active", true)
       .order("sort_order", { ascending: true })

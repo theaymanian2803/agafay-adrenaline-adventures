@@ -1,3 +1,4 @@
+import { db } from "@/lib/db";
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
@@ -6,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Tag, Sparkles } from "lucide-react";
 import SectionVideo from "@/components/site/SectionVideo";
@@ -47,11 +47,11 @@ const BookingForm = ({ videoUrl }: { videoUrl?: string | null }) => {
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
-    supabase.from("tours").select("id,name,price,category_id,quad_type,route_from,route_to").eq("active", true)
+    db.from("tours").select("id,name,price,category_id,quad_type,route_from,route_to").eq("active", true)
       .then(({ data }) => setTours((data as Tour[]) || []));
-    supabase.from("quads").select("id,name,quad_type").eq("status", "available")
+    db.from("quads").select("id,name,quad_type").eq("status", "available")
       .then(({ data }) => setQuads((data as Quad[]) || []));
-    supabase
+    db
       .from("offers")
       .select("id,title,description,discount_percent,starts_at,ends_at")
       .eq("active", true)
@@ -109,7 +109,7 @@ const BookingForm = ({ videoUrl }: { videoUrl?: string | null }) => {
     };
     if (!payload.tour_id) delete payload.tour_id;
     if (!payload.quad_id) delete payload.quad_id;
-    const { error } = await supabase.from("bookings").insert(payload);
+    const { error } = await db.from("bookings").insert(payload);
     setSubmitting(false);
     if (error) {
       toast.error("Could not submit booking. Please try again.");
