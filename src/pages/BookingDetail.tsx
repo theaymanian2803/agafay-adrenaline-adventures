@@ -1,7 +1,7 @@
+import { db } from "@/lib/db";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays, Mail, MapPin, Phone, Printer, Route, User, Users, Wrench, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -48,7 +48,7 @@ const BookingDetail = () => {
 
   useEffect(() => {
     if (!id || !isAdmin) return;
-    supabase
+    db
       .from("bookings")
       .select("*, tours(name,duration,difficulty,price,terrain), quads(name,engine_size,quad_type,capacity,transmission), categories(name)")
       .eq("id", id)

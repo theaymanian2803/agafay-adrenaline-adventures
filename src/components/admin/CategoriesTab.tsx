@@ -1,6 +1,6 @@
+import { db } from "@/lib/db";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,7 +32,7 @@ const CategoriesTab = () => {
   const [form, setForm] = useState<any>(empty);
 
   const load = async () => {
-    const { data } = await supabase.from("categories" as any).select("*").order("sort_order", { ascending: true });
+    const { data } = await db.from("categories").select("*").order("sort_order", { ascending: true });
     setCategories(((data as unknown) as Category[]) || []);
   };
   useEffect(() => { load(); }, []);
@@ -45,8 +45,8 @@ const CategoriesTab = () => {
     if (!parsed.success) { toast.error(parsed.error.issues[0]?.message || "Check category details"); return; }
     const payload = { ...parsed.data, description: parsed.data.description || null };
     const { error } = editing
-      ? await supabase.from("categories" as any).update(payload).eq("id", editing.id)
-      : await supabase.from("categories" as any).insert(payload);
+      ? await db.from("categories").update(payload).eq("id", editing.id)
+      : await db.from("categories").insert(payload);
     if (error) { toast.error(error.message); return; }
     toast.success(editing ? "Category updated" : "Category created");
     setOpen(false); load();
@@ -54,7 +54,7 @@ const CategoriesTab = () => {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this category?")) return;
-    const { error } = await supabase.from("categories" as any).delete().eq("id", id);
+    const { error } = await db.from("categories").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success("Category deleted"); load();
   };

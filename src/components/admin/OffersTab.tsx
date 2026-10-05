@@ -1,5 +1,5 @@
+import { db } from "@/lib/db";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +23,7 @@ const OffersTab = () => {
   const [form, setForm] = useState<any>(empty);
 
   const load = async () => {
-    const { data } = await supabase.from("offers").select("*").order("created_at", { ascending: false });
+    const { data } = await db.from("offers").select("*").order("created_at", { ascending: false });
     setOffers((data as Offer[]) || []);
   };
   useEffect(() => { load(); }, []);
@@ -34,8 +34,8 @@ const OffersTab = () => {
   const save = async () => {
     const payload = { ...form, discount_percent: Number(form.discount_percent) };
     const { error } = editing
-      ? await supabase.from("offers").update(payload).eq("id", editing.id)
-      : await supabase.from("offers").insert(payload);
+      ? await db.from("offers").update(payload).eq("id", editing.id)
+      : await db.from("offers").insert(payload);
     if (error) { toast.error(error.message); return; }
     toast.success(editing ? "Offer updated" : "Offer created");
     setOpen(false); load();
@@ -43,7 +43,7 @@ const OffersTab = () => {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this offer?")) return;
-    await supabase.from("offers").delete().eq("id", id);
+    await db.from("offers").delete().eq("id", id);
     toast.success("Offer deleted"); load();
   };
 

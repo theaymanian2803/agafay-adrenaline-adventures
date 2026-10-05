@@ -1,6 +1,6 @@
+import { db } from "@/lib/db";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -24,7 +24,7 @@ const BookingsTab = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
 
   const load = async () => {
-    const { data } = await supabase
+    const { data } = await db
       .from("bookings")
       .select("*, tours(name), quads(name)")
       .order("booking_date", { ascending: false });
@@ -33,7 +33,7 @@ const BookingsTab = () => {
   useEffect(() => { load(); }, []);
 
   const updateStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
+    const { error } = await db.from("bookings").update({ status }).eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success("Status updated"); load();
   };

@@ -1,7 +1,7 @@
+import { db } from "@/lib/db";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Gauge, MapPin, Mountain, Route, ShieldCheck, Users } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/site/Navbar";
@@ -21,7 +21,7 @@ const TourDetail = () => {
 
   useEffect(() => {
     if (!id) return;
-    supabase
+    db
       .from("tours")
       .select("*, categories(name, description)")
       .eq("id", id)

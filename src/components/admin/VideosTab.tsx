@@ -1,6 +1,6 @@
+import { db } from "@/lib/db";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,8 +19,8 @@ const VideosTab = () => {
   const [savingId, setSavingId] = useState<string | null>(null);
 
   const load = async () => {
-    const { data, error } = await supabase
-      .from("section_videos" as any)
+    const { data, error } = await db
+      .from("section_videos")
       .select("id,section_key,label,video_url,active,sort_order")
       .order("sort_order", { ascending: true });
     if (error) {
@@ -44,8 +44,8 @@ const VideosTab = () => {
     }
 
     setSavingId(video.id);
-    const { error } = await supabase
-      .from("section_videos" as any)
+    const { error } = await db
+      .from("section_videos")
       .update({ video_url: parsed.data || null, active: video.active })
       .eq("id", video.id);
     setSavingId(null);
