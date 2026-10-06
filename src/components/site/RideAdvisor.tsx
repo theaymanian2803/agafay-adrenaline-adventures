@@ -86,7 +86,7 @@ const RideAdvisor = () => {
                   {result.tours.map((t) => (
                     <Link key={t.id} to={`/tours/${t.id}`} className="block bg-card border border-border rounded-xl p-5 hover:border-primary transition-colors">
                       <h4 className="font-display text-2xl">{t.name}</h4>
-                      <p className="text-xs text-muted-foreground mb-2">{String(t.duration ?? "")} · {String(t.difficulty ?? "")} · {String(t.price ?? "")} MAD</p>
+                      <p className="text-xs text-muted-foreground mb-2">{String(t.duration ?? "")} · {String(t.difficulty ?? "")} · from {String(t.price ?? "")}</p>
                       <p className="text-sm">{t.reason}</p>
                     </Link>
                   ))}
@@ -100,7 +100,7 @@ const RideAdvisor = () => {
                   {result.quads.map((q) => (
                     <div key={q.id} className="bg-card border border-border rounded-xl p-5">
                       <h4 className="font-display text-2xl">{q.name}</h4>
-                      <p className="text-xs text-muted-foreground mb-2">{String(q.engine_size ?? "")} · {String(q.quad_type ?? "")} · seats {String(q.capacity ?? "")}</p>
+                      <p className="text-xs text-muted-foreground mb-2">{String(q.engine_size ?? "")}cc · seats {String(q.capacity ?? "")}</p>
                       <p className="text-sm">{q.reason}</p>
                     </div>
                   ))}
