@@ -2,6 +2,7 @@ import Navbar from "@/components/site/Navbar";
 import Hero from "@/components/site/Hero";
 import Highlights from "@/components/site/Highlights";
 import Tours from "@/components/site/Tours";
+import RideAdvisor from "@/components/site/RideAdvisor";
 import Pricing from "@/components/site/Pricing";
 import Testimonials from "@/components/site/Testimonials";
 import BookingForm from "@/components/site/BookingForm";
@@ -17,6 +18,7 @@ const Index = () => {
       <Hero videoUrl={videos.hero?.video_url} />
       <Highlights videoUrl={videos.highlights?.video_url} />
       <Tours videoUrl={videos.tours?.video_url} />
+      <RideAdvisor />
       <Pricing videoUrl={videos.pricing?.video_url} />
       <Testimonials videoUrl={videos.testimonials?.video_url} />
       <BookingForm videoUrl={videos.booking?.video_url} />
