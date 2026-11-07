@@ -1,8 +1,9 @@
 import { createClient as createLibsql } from "npm:@libsql/client@0.14.0/web";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-const cors = {
-  "Access-Control-Allow-Origin": "*",
+const functionCorsHeaders = {
+  ...corsHeaders,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
@@ -32,7 +33,7 @@ const PUBLIC_READ: Record<string, string | null | true> = {
 const OPS: Record<string, string> = { eq: "=", neq: "!=", lt: "<", lte: "<=", gt: ">", gte: ">=" };
 
 const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
+  new Response(JSON.stringify(body), { status, headers: { ...functionCorsHeaders, "Content-Type": "application/json" } });
 
 const toDb = (col: string, v: unknown) => {
   if (v === undefined) return null;
@@ -79,7 +80,7 @@ const validateBooking = (b: Record<string, any>) => {
 };
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: cors });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: functionCorsHeaders });
   try {
     const url = Deno.env.get("TURSO_DATABASE_URL"), token = Deno.env.get("TURSO_AUTH_TOKEN");
     if (!url) return json({ data: null, error: { message: "Database not configured yet" } });
