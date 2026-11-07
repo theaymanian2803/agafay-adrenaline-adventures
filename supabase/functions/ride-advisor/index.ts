@@ -1,12 +1,13 @@
 import { createClient as createLibsql } from "npm:@libsql/client@0.14.0/web";
+import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-const cors = {
-  "Access-Control-Allow-Origin": "*",
+const functionCorsHeaders = {
+  ...corsHeaders,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-lovable-aig-run-id",
   "Access-Control-Expose-Headers": "X-Lovable-AIG-Run-ID",
 };
 const json = (body: unknown, status = 200, extra: Record<string, string> = {}) =>
-  new Response(JSON.stringify(body), { status, headers: { ...cors, ...extra, "Content-Type": "application/json" } });
+  new Response(JSON.stringify(body), { status, headers: { ...functionCorsHeaders, ...extra, "Content-Type": "application/json" } });
 
 const schema = {
   type: "object",
@@ -32,7 +33,7 @@ const schema = {
 };
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: cors });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: functionCorsHeaders });
   try {
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) return json({ error: "AI is not configured." }, 500);
@@ -129,7 +130,7 @@ Deno.serve(async (req) => {
       quads: parsed.quads.filter((q) => quadMap.has(q.id)).slice(0, 3).map((q) => ({ ...quadMap.get(q.id), reason: q.reason })),
     }, 200, runHdr);
   } catch (e) {
-    if (req.signal.aborted) return new Response(null, { status: 499, headers: cors });
+    if (req.signal.aborted) return new Response(null, { status: 499, headers: functionCorsHeaders });
     return json({ error: e instanceof Error ? e.message : "Unexpected error" }, 500);
   }
 });
